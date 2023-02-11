@@ -645,13 +645,13 @@ drive_plot_saver <- function(language_def = "ENG", logo_in_plot = FALSE){
   }
   
   # for loop to create a plot for every player (in all_players_urls) and save it on google drive
-  for (row_df in nrow(all_players_urls)) {
+  for (row_df in seq(1, nrow(all_players_urls))) {
     URL_player <- all_players_urls$Players.URL[row_df]
     TEAM_player <- all_players_urls$Team[row_df]
     LEAGUE_player <- all_players_urls$League[row_df]
     NAME_player <- substring(URL_player, 39)
     
-    
+  
     # check if the player entered played more than 450 mins in the big 5 leagues in the last 365 days
     match_index <- grep(NAME_player, big5_team_playing_time$Name)
     if (length(match_index) != 0) {
