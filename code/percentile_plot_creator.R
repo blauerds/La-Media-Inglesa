@@ -1,4 +1,3 @@
-# libraries + fonts used
 library(tidyverse)
 library(dplyr)
 library(ggplot2)
@@ -12,8 +11,6 @@ library(showtext)
 library(roxygen2)
 font_add_google(name = "Barlow", family = "barlow")
 showtext_auto()
-
-#### FUNCTIONS #############################################################
 
 # function to generate a percentile plot, with LMI logo added
 percentile_plot_creator <- function(playerlink = NULL, lang = "ENG", curr_szn = 2023){
@@ -698,17 +695,3 @@ drive_plot_saver <- function(language_def = "ENG", logo_in_plot = FALSE){
   })
 }
 }
-
-
-#### CODE FUNCTION EXCUTER #################################################
-# get time before executing everything
-before_time <- Sys.time()
-
-
-get_players_urls_big5(curr_szn = 2023, leagues = "ENG")
-drive_plot_saver(language_def = "ESP", logo_in_plot = TRUE)
-
-
-# calculate execution time
-end_time <- Sys.time()
-lasting_time <- before_time - end_time
