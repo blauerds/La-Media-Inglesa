@@ -587,9 +587,9 @@ percentile_plot_creator <- function(playerlink = NULL, lang = "ENG", curr_szn = 
 }
 
 # function to get big5 leagues, teams and players URLs
-get_players_urls_big5 <- function(curr_szn = 2023) {
+get_players_urls_big5 <- function(curr_szn = 2023, leagues = c("ENG", "ESP", "FRA", "ITA", "GER")) {
   # get leagues' URLs
-  league_urls <- fb_league_urls(country = c("ENG", "ESP", "FRA", "ITA", "GER"),
+  league_urls <- fb_league_urls(country = leagues,
                                 gender = "M",
                                 season_end_year = curr_szn)
   league_names <- c("Premier-League", "La-Liga", "Ligue-1", "Bundesliga", "Serie-A")
@@ -645,20 +645,14 @@ drive_plot_saver <- function(language_def = "ENG", logo_in_plot = FALSE){
   }
   
   # for loop to create a plot for every player (in all_players_urls) and save it on google drive
-  for (row_df in seq(1, nrow(all_players_urls))) {
-    URL_player <- all_players_urls$Players.URL[row_df]
-    TEAM_player <- all_players_urls$Team[row_df]
-    LEAGUE_player <- all_players_urls$League[row_df]
+  for (rowd in seq(1, nrow(all_players_urls))) {
+    try({
+    URL_player <- all_players_urls$Players.URL[rowd]
+    TEAM_player <- all_players_urls$Team[rowd]
+    LEAGUE_player <- all_players_urls$League[rowd]
     NAME_player <- substring(URL_player, 39)
     
   
-    # check if the player entered played more than 450 mins in the big 5 leagues in the last 365 days
-    match_index <- grep(NAME_player, big5_team_playing_time$Name)
-    if (length(match_index) != 0) {
-      filtered_player_data
-      big5_team_playing_time[c(3179, 6490), ]
-    }
-    
     # get the match logs of the last 2 seasons
     player_last_365 <- c()
     for (szn in c(curr_szn-1, curr_szn)) {
@@ -701,16 +695,17 @@ drive_plot_saver <- function(language_def = "ENG", logo_in_plot = FALSE){
         drive_upload("figs/plot_ready.png", path = path_file, overwrite = T, name = name_file)
       }
     }
-  }
+  })
+}
 }
 
 
-#### CODE #################################################################
+#### CODE FUNCTION EXCUTER #################################################
 # get time before executing everything
 before_time <- Sys.time()
 
 
-# execute the function
+get_players_urls_big5(curr_szn = 2023, leagues = "ENG")
 drive_plot_saver(language_def = "ESP", logo_in_plot = TRUE)
 
 
