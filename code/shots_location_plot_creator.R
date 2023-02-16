@@ -48,10 +48,10 @@ shot_locations <- function(player_id = NULL, match_date = 0, season_sel = 0, lab
   
   # create a column to determine the desired size of the point, based on the quality (xG)
   mapped_shots <- mapped_shots %>% mutate(size_ball = case_when(
-    (round(as.numeric(xG), 1) <= 0.1) ~  1,
-    (round(as.numeric(xG), 1) > 0.1) & (round(as.numeric(xG), 1) <= 0.2) ~ 2,
-    (round(as.numeric(xG), 1) > 0.2) & (round(as.numeric(xG), 1) <= 0.5) ~ 3,
-    (round(as.numeric(xG), 1) > 0.5) ~ 4
+    (round(as.numeric(xG), 1) <= 0.1) ~  1.5,
+    (round(as.numeric(xG), 1) > 0.1) & (round(as.numeric(xG), 1) <= 0.2) ~ 2.5,
+    (round(as.numeric(xG), 1) > 0.2) & (round(as.numeric(xG), 1) <= 0.5) ~ 3.5,
+    (round(as.numeric(xG), 1) > 0.5) ~ 4.5
   ))
   
   # change the names of the values in the column "result" to make them more readable
@@ -104,7 +104,7 @@ shot_locations <- function(player_id = NULL, match_date = 0, season_sel = 0, lab
   if (label_type == "All") {
     plt <- plt + geom_text(
       aes(label = xG),
-      nudge_y = ifelse(round(mapped_shots$xG, 1) <= 0.2, -40,
+      nudge_y = ifelse(round(mapped_shots$xG, 1) <= 0.2, -30,
                        ifelse(round(mapped_shots$xG, 1) > 0.2 &
                                 round(mapped_shots$xG, 1) <= 0.5, -45,
                               ifelse(round(mapped_shots$xG, 1) > 0.5, -50, -40))),
@@ -114,7 +114,7 @@ shot_locations <- function(player_id = NULL, match_date = 0, season_sel = 0, lab
   } else if (label_type == "All_NO") {
     plt <- plt + geom_text(
       aes(label = xG),
-      nudge_y = ifelse(round(mapped_shots$xG, 1) <= 0.2, -40,
+      nudge_y = ifelse(round(mapped_shots$xG, 1) <= 0.2, -30,
                        ifelse(round(mapped_shots$xG, 1) > 0.2 &
                                 round(mapped_shots$xG, 1) <= 0.5, -45,
                               ifelse(round(mapped_shots$xG, 1) > 0.5, -50, -40))),
