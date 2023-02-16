@@ -19,7 +19,7 @@ font_add_google(name = "Barlow", family = "barlow")
 showtext_auto()
 
 # function to generate a shot locations plot, with LMI logo added
-shot_locations <- function(player_id = NULL, match_date = NULL, label_type = "All_NO"){
+shot_locations <- function(player_id = NULL, match_date = 0, season_sel = 0, label_type = "All_NO"){
   # corroborate that the label_type argument is correct
   allowed_label_type <- c("All", "All_NO", "None")
   if (!label_type %in% allowed_label_type) {
@@ -36,8 +36,15 @@ shot_locations <- function(player_id = NULL, match_date = NULL, label_type = "Al
   # remove the time in the date
   player_shots$date <- substr(player_shots$date, 1, 10)
   
-  # filter by date
-  mapped_shots <- player_shots %>% filter(date == match_date)
+  # filter by date used as argument, if no argument then use season
+  # if no argument in both use all dates
+  if (!match_date == 0) {
+    mapped_shots <- player_shots %>% filter(date == match_date)
+  } else if (!season_sel == 0) {
+    mapped_shots <- player_shots %>% filter(season == season_sel)
+  } else if (season_sel == 0) {
+    mapped_shots <- player_shots
+  }
   
   # create a column to determine the desired size of the point, based on the quality (xG)
   mapped_shots <- mapped_shots %>% mutate(size_ball = case_when(
@@ -74,7 +81,7 @@ shot_locations <- function(player_id = NULL, match_date = NULL, label_type = "Al
   mapped_shots$xG <- round(mapped_shots$xG, 2)
   
   # make plot with pitch image as background
-  plt <- ggplot(mapped_shots, aes(x = Y * img_width, y = X * img_height)) +
+  plt <- ggplot(mapped_shots, aes(x = Y * img_width, y = X * img_height + 100)) +
     annotation_custom(pitch_img, xmin=-Inf, xmax=Inf, ymin=-Inf, ymax=Inf) +
     geom_point(aes(size = as.numeric(size_ball), color = result, fill = result), alpha = 0.4) +
     scale_size_identity() +
@@ -129,13 +136,26 @@ shot_locations <- function(player_id = NULL, match_date = NULL, label_type = "Al
   own_team <- ifelse(mapped_shots$home_away[1] == "h",mapped_shots$home_team[1],
                        ifelse(mapped_shots$home_away[1] == "a",mapped_shots$away_team[1]))
   
-  # set title to add to the image
-  title <- paste(mapped_shots$player[1],
-        paste("(", toupper(substr(own_team, 1, 3)), ")", sep = ""),
-        "vs.",
-        rival_team,
-        " - ",
-        format(ymd(mapped_shots$date[1]), "%d de %B de %Y"))
+  # set title to add to the image. The date in title changes if there's a date entered
+  if (!match_date == 0) {
+    title <- paste(mapped_shots$player[1],
+                   paste("(", own_team, " vs. ", rival_team, ")", sep = ""),
+                   "-",
+                   format(ymd(mapped_shots$date[1]), "%d de %B de %Y"))
+  } else if (!season_sel == 0) {
+    title <- paste(mapped_shots$player[1],
+                   "-",
+                   paste(mapped_shots$season[1],
+                         "/",
+                         as.numeric(substr(mapped_shots$season[1], 3, 4)) + 1, sep = ""))
+  } else if (season_sel == 0) {
+    title <- paste(mapped_shots$player[1],
+                   "-",
+                   paste(min(mapped_shots$season),
+                         " to ",
+                         max(mapped_shots$season), sep = ""))
+  }
+  
   
   # add title to the image + the legend with credits and source
   img_with_title <- image_annotate(img, title, size = 45, font = "Helvetica",
@@ -151,8 +171,6 @@ shot_locations <- function(player_id = NULL, match_date = NULL, label_type = "Al
   # save image with text
   image_write(img_with_title, "figs/shots_plot.png")
 }
-
-
 
 
 
