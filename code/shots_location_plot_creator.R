@@ -106,8 +106,8 @@ shot_locations <- function(player_id = NULL, match_date = 0, season_sel = 0, lab
       aes(label = xG),
       nudge_y = ifelse(round(mapped_shots$xG, 1) <= 0.2, -40,
                        ifelse(round(mapped_shots$xG, 1) > 0.2 &
-                                round(mapped_shots$xG, 1) <= 0.5, -50,
-                              ifelse(round(mapped_shots$xG, 1) > 0.5, -60, -40))),
+                                round(mapped_shots$xG, 1) <= 0.5, -45,
+                              ifelse(round(mapped_shots$xG, 1) > 0.5, -50, -40))),
       size = 7,
       color = "#FFFFFF", family = "barlow"
     )
@@ -116,8 +116,8 @@ shot_locations <- function(player_id = NULL, match_date = 0, season_sel = 0, lab
       aes(label = xG),
       nudge_y = ifelse(round(mapped_shots$xG, 1) <= 0.2, -40,
                        ifelse(round(mapped_shots$xG, 1) > 0.2 &
-                                round(mapped_shots$xG, 1) <= 0.5, -50,
-                              ifelse(round(mapped_shots$xG, 1) > 0.5, -60, -40))),
+                                round(mapped_shots$xG, 1) <= 0.5, -45,
+                              ifelse(round(mapped_shots$xG, 1) > 0.5, -50, -40))),
       check_overlap = T,
       size = 7,
       color = "#FFFFFF", family = "barlow"
