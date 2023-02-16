@@ -161,11 +161,11 @@ shot_locations <- function(player_id = NULL, match_date = 0, season_sel = 0, lab
   img_with_title <- image_annotate(img, title, size = 45, font = "Helvetica",
                                    gravity = "north", color = "white") %>%
     image_annotate("@blauerds" , size = 30, font = "Helvetica",
-                   gravity = "north", color = "white", location = "-940+1300") %>%
+                   gravity = "north", color = "white", location = "-940+1455") %>%
     image_annotate("https://github.com/blauerds", size = 30, font = "Helvetica",
-                   gravity = "north", color = "white", location = "-820+1340") %>%
+                   gravity = "north", color = "white", location = "-820+1495") %>%
     image_annotate("Source: Understat", size = 30, font = "Helvetica",
-                   gravity = "north", color = "white", location = "-892+1380")
+                   gravity = "north", color = "white", location = "-892+1535")
   
   
   # save image with text
