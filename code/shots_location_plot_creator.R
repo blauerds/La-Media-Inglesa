@@ -14,6 +14,7 @@ library(raster)
 library(grid)
 library(png)
 library(ggimage)
+library(lubridate)
 font_add_google(name = "Barlow", family = "barlow")
 showtext_auto()
 
@@ -117,10 +118,42 @@ shot_locations <- function(player_id = NULL, match_date = NULL, label_type = "Al
   }
   
   # save the image, cropping the white border and the defensive half of the pitch
-  ggsave("figs\\shots_plot.png", plt)
-  cropped_plot <- image_crop(image_read("figs/shots_plot.png"), "1530x1018+291+54")
+  ggsave("figs\\shots_plot.png", plt, width = 2234, height = 2978, units = "px")
+  cropped_plot <- image_crop(image_read("figs/shots_plot.png"), "2160x1469+40+54")
   image_write(cropped_plot, "figs/shots_plot.png")
+  img <- image_read("figs/shots_plot.png")
+  
+  # determine the name of the rival and own team based on the home_away column
+  rival_team <- ifelse(mapped_shots$home_away[1] == "h",mapped_shots$away_team[1],
+         ifelse(mapped_shots$home_away[1] == "a",mapped_shots$home_team[1]))
+  own_team <- ifelse(mapped_shots$home_away[1] == "h",mapped_shots$home_team[1],
+                       ifelse(mapped_shots$home_away[1] == "a",mapped_shots$away_team[1]))
+  
+  # set title to add to the image
+  title <- paste(mapped_shots$player[1],
+        paste("(", toupper(substr(own_team, 1, 3)), ")", sep = ""),
+        "vs.",
+        rival_team,
+        " - ",
+        format(ymd(mapped_shots$date[1]), "%d de %B de %Y"))
+  
+  # add title to the image + the legend with credits and source
+  img_with_title <- image_annotate(img, title, size = 45, font = "Helvetica",
+                                   gravity = "north", color = "white") %>%
+    image_annotate("@blauerds" , size = 30, font = "Helvetica",
+                   gravity = "north", color = "white", location = "-940+1300") %>%
+    image_annotate("https://github.com/blauerds", size = 30, font = "Helvetica",
+                   gravity = "north", color = "white", location = "-820+1340") %>%
+    image_annotate("Source: Understat", size = 30, font = "Helvetica",
+                   gravity = "north", color = "white", location = "-892+1380")
+  
+  
+  # save image with text
+  image_write(img_with_title, "figs/shots_plot.png")
 }
 
 
 
+
+
+  
