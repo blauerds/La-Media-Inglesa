@@ -126,7 +126,7 @@ shot_locations <- function(player_id = NULL, match_date = 0, season_sel = 0, lab
   
   # save the image, cropping the white border and the defensive half of the pitch
   ggsave("figs\\shots_plot.png", plt, width = 2234, height = 2978, units = "px")
-  cropped_plot <- image_crop(image_read("figs/shots_plot.png"), "2160x1469+40+54")
+  cropped_plot <- image_crop(image_read("figs/shots_plot.png"), "2160x1589+40+54")
   image_write(cropped_plot, "figs/shots_plot.png")
   img <- image_read("figs/shots_plot.png")
   
