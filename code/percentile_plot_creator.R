@@ -37,10 +37,12 @@ percentile_plot_creator <- function(playerlink = NULL, lang = "ENG", curr_szn = 
     stats_percentiles <- c("Non-Penalty Goals", "Non-Penalty xG", "Shots on target", "Goals/Shot",
                            "xAG", "Passes Completed", "Pass Completion % (Short)", "Pass Completion % (Medium)",
                            "Pass Completion % (Long)", "Shot-Creating Actions", "Tackles", "Blocks", "Interceptions",
-                           "Successful Take-Ons", "Progressive Carries", "Progressive Passes Rec", "Progressive Passes")
+                           "Successful Take-Ons", "Progressive Carries", "Progressive Passes Rec", "Progressive Passes",
+                           "Aerials Won", "Yellow Cards", "Fouls Committed", "Fouls Drawn")
     stats_GK_percentiles <- c("PSxG-GA", "Save Percentage", "Clean Sheet Percentage", "Save% (Penalty Kicks)",
                               "Pass Completion Percentage", "Launch %", "Crosses Stopped %", "Def. Actions Outside Pen. Area",
-                              "Avg. Distance of Def. Actions")
+                              "Avg. Distance of Def. Actions", "PSxG/SoT", "Free Kick Goals Against", "Crosses Faced", "Goals Against",
+                              "Avg. Length of Goal Kicks", "Goal Kicks", "Launch% (Goal Kicks)", "Penalty Kicks Attempted")
     current_season_end_year <- curr_szn
     
     # get player's scouting report
@@ -108,6 +110,18 @@ percentile_plot_creator <- function(playerlink = NULL, lang = "ENG", curr_szn = 
         } else if (player_percentiles_data$Statistic[row] == "Progressive Passes Rec") {
           player_percentiles_data$Statistic[row] <- "Prog Rec"
           player_percentiles_data$StatGroup[row] <- "Possession"
+        } else if (player_percentiles_data$Statistic[row] == "Aerials Won") {
+          player_percentiles_data$Statistic[row] <- "Aerials Won"
+          player_percentiles_data$StatGroup[row] <- "Defense"
+        } else if (player_percentiles_data$Statistic[row] == "Yellow Cards") {
+          player_percentiles_data$Statistic[row] <- "Yellows"
+          player_percentiles_data$StatGroup[row] <- "Defense"
+        } else if (player_percentiles_data$Statistic[row] == "Fouls Committed") {
+          player_percentiles_data$Statistic[row] <- "Fouls"
+          player_percentiles_data$StatGroup[row] <- "Defense"
+        } else if (player_percentiles_data$Statistic[row] == "Fouls Drawn") {
+          player_percentiles_data$Statistic[row] <- "Fouls Created"
+          player_percentiles_data$StatGroup[row] <- "Possession"
         }
       }
       
@@ -147,7 +161,7 @@ percentile_plot_creator <- function(playerlink = NULL, lang = "ENG", curr_szn = 
           player_percentiles_data$StatGroup[row] <- "Goalkeeping"
         } else if (player_percentiles_data$Statistic[row] == "Save% (Penalty Kicks)") {
           player_percentiles_data$Statistic[row] <- "Penalty %"
-          player_percentiles_data$StatGroup[row] <- "Goalkeeping"
+          player_percentiles_data$StatGroup[row] <- "Set Piece"
         } else if (player_percentiles_data$Statistic[row] == "Pass Completion Percentage") {
           player_percentiles_data$Statistic[row] <- "Cmp %"
           player_percentiles_data$StatGroup[row] <- "Passing"
@@ -156,18 +170,40 @@ percentile_plot_creator <- function(playerlink = NULL, lang = "ENG", curr_szn = 
           player_percentiles_data$StatGroup[row] <- "Passing"
         } else if (player_percentiles_data$Statistic[row] == "Crosses Stopped %") {
           player_percentiles_data$Statistic[row] <- "Crosses Stp %"
-          player_percentiles_data$StatGroup[row] <- "Goalkeeping"
+          player_percentiles_data$StatGroup[row] <- "Set Piece"
         } else if (player_percentiles_data$Statistic[row] == "Def. Actions Outside Pen. Area") {
           player_percentiles_data$Statistic[row] <- "DOA"
           player_percentiles_data$StatGroup[row] <- "Defense"
         } else if (player_percentiles_data$Statistic[row] == "Avg. Distance of Def. Actions") {
-          player_percentiles_data$Statistic[row] <- "Avg Dist DOA"
+          player_percentiles_data$Statistic[row] <- "Dist DOA"
           player_percentiles_data$StatGroup[row] <- "Defense"
         } else if (player_percentiles_data$Statistic[row] == "PSxG/SoT") {
           player_percentiles_data$Statistic[row] <- "PSxG/SoT"
           player_percentiles_data$StatGroup[row] <- "Goalkeeping"
-        }
+        } else if (player_percentiles_data$Statistic[row] == "Free Kick Goals Against") {
+          player_percentiles_data$Statistic[row] <- "FK Goals"
+          player_percentiles_data$StatGroup[row] <- "Set Piece"
+        } else if (player_percentiles_data$Statistic[row] == "Crosses Faced") {
+          player_percentiles_data$Statistic[row] <- "Crosses Faced"
+          player_percentiles_data$StatGroup[row] <- "Set Piece"
+        } else if (player_percentiles_data$Statistic[row] == "Goals Against") {
+          player_percentiles_data$Statistic[row] <- "Gls Against"
+          player_percentiles_data$StatGroup[row] <- "Goalkeeping"
+        } else if (player_percentiles_data$Statistic[row] == "Avg. Length of Goal Kicks") {
+          player_percentiles_data$Statistic[row] <- "Length Goal Kicks"
+          player_percentiles_data$StatGroup[row] <- "Passing"
+        } else if (player_percentiles_data$Statistic[row] == "Goal Kicks") {
+          player_percentiles_data$Statistic[row] <- "Goal Kicks"
+          player_percentiles_data$StatGroup[row] <- "Passing"
+        } else if (player_percentiles_data$Statistic[row] == "Launch% (Goal Kicks)") {
+          player_percentiles_data$Statistic[row] <- "Goal Kicks %"
+          player_percentiles_data$StatGroup[row] <- "Passing"
+        } else if (player_percentiles_data$Statistic[row] == "Penalty Kicks Attempted") {
+          player_percentiles_data$Statistic[row] <- "PK Against"
+          player_percentiles_data$StatGroup[row] <- "Set Piece"
+        } 
       }
+      
       
       # order by stat group
       player_percentiles_data <- player_percentiles_data[order(player_percentiles_data$StatGroup), ]
@@ -176,13 +212,14 @@ percentile_plot_creator <- function(playerlink = NULL, lang = "ENG", curr_szn = 
       player_percentiles_data <- player_percentiles_data %>% mutate(id = case_when(
         StatGroup == "Defense" ~ 1,
         StatGroup == "Passing" ~ 2,
-        StatGroup == "Goalkeeping" ~ 3
+        StatGroup == "Goalkeeping" ~ 3,
+        StatGroup == "Set Piece" ~ 4
       ),
       season = paste(current_season_end_year-1, "/", current_season_end_year, sep=""))
       
       # group colors for the plot
       group.colors <- c("Defense" = "#C86742", "Passing" = "#84B86F",
-                        "Goalkeeping" = "#6F78B3")
+                        "Goalkeeping" = "#6F78B3", "Set Piece" = "#E3AE2E")
     }
     
     
@@ -293,15 +330,18 @@ percentile_plot_creator <- function(playerlink = NULL, lang = "ENG", curr_szn = 
     
     # save the plot after the logo was added
     image_write(plot_logoed, path = "figs\\plot_ready.png", format = "png")
+    
   } else if (lang == "ESP") {
     # data for later
     stats_percentiles <- c("Non-Penalty Goals", "Non-Penalty xG", "Shots on target", "Goals/Shot",
                            "xAG", "Passes Completed", "Pass Completion % (Short)", "Pass Completion % (Medium)",
                            "Pass Completion % (Long)", "Shot-Creating Actions", "Tackles", "Blocks", "Interceptions",
-                           "Successful Take-Ons", "Progressive Carries", "Progressive Passes Rec", "Progressive Passes")
+                           "Successful Take-Ons", "Progressive Carries", "Progressive Passes Rec", "Progressive Passes",
+                           "Aerials Won", "Yellow Cards", "Fouls Committed", "Fouls Drawn")
     stats_GK_percentiles <- c("PSxG-GA", "Save Percentage", "Clean Sheet Percentage", "Save% (Penalty Kicks)",
                               "Pass Completion Percentage", "Launch %", "Crosses Stopped %", "Def. Actions Outside Pen. Area",
-                              "Avg. Distance of Def. Actions")
+                              "Avg. Distance of Def. Actions", "PSxG/SoT", "Free Kick Goals Against", "Crosses Faced", "Goals Against",
+                              "Avg. Length of Goal Kicks", "Goal Kicks", "Launch% (Goal Kicks)", "Penalty Kicks Attempted")
     current_season_end_year <- curr_szn
     
     # get player's scouting report
@@ -369,6 +409,18 @@ percentile_plot_creator <- function(playerlink = NULL, lang = "ENG", curr_szn = 
         } else if (player_percentiles_data$Statistic[row] == "Progressive Passes Rec") {
           player_percentiles_data$Statistic[row] <- "Prog Rec"
           player_percentiles_data$StatGroup[row] <- "Possession"
+        } else if (player_percentiles_data$Statistic[row] == "Aerials Won") {
+          player_percentiles_data$Statistic[row] <- "Aerials Won"
+          player_percentiles_data$StatGroup[row] <- "Defense"
+        } else if (player_percentiles_data$Statistic[row] == "Yellow Cards") {
+          player_percentiles_data$Statistic[row] <- "Yellows"
+          player_percentiles_data$StatGroup[row] <- "Defense"
+        } else if (player_percentiles_data$Statistic[row] == "Fouls Committed") {
+          player_percentiles_data$Statistic[row] <- "Fls"
+          player_percentiles_data$StatGroup[row] <- "Defense"
+        } else if (player_percentiles_data$Statistic[row] == "Fouls Drawn") {
+          player_percentiles_data$Statistic[row] <- "Fls Created"
+          player_percentiles_data$StatGroup[row] <- "Possession"
         }
       }
       
@@ -428,11 +480,32 @@ percentile_plot_creator <- function(playerlink = NULL, lang = "ENG", curr_szn = 
           player_percentiles_data$Statistic[row] <- "DOA"
           player_percentiles_data$StatGroup[row] <- "Defense"
         } else if (player_percentiles_data$Statistic[row] == "Avg. Distance of Def. Actions") {
-          player_percentiles_data$Statistic[row] <- "Avg Dist DOA"
+          player_percentiles_data$Statistic[row] <- "Dist DOA"
           player_percentiles_data$StatGroup[row] <- "Defense"
         } else if (player_percentiles_data$Statistic[row] == "PSxG/SoT") {
           player_percentiles_data$Statistic[row] <- "PSxG/SoT"
           player_percentiles_data$StatGroup[row] <- "Goalkeeping"
+        } else if (player_percentiles_data$Statistic[row] == "Free Kick Goals Against") {
+          player_percentiles_data$Statistic[row] <- "FK Goals"
+          player_percentiles_data$StatGroup[row] <- "Set Piece"
+        } else if (player_percentiles_data$Statistic[row] == "Crosses Faced") {
+          player_percentiles_data$Statistic[row] <- "Crosses Faced"
+          player_percentiles_data$StatGroup[row] <- "Set Piece"
+        } else if (player_percentiles_data$Statistic[row] == "Goals Against") {
+          player_percentiles_data$Statistic[row] <- "Gls Against"
+          player_percentiles_data$StatGroup[row] <- "Goalkeeping"
+        } else if (player_percentiles_data$Statistic[row] == "Avg. Length of Goal Kicks") {
+          player_percentiles_data$Statistic[row] <- "Length Goal Kicks"
+          player_percentiles_data$StatGroup[row] <- "Passing"
+        } else if (player_percentiles_data$Statistic[row] == "Goal Kicks") {
+          player_percentiles_data$Statistic[row] <- "Goal Kicks"
+          player_percentiles_data$StatGroup[row] <- "Passing"
+        } else if (player_percentiles_data$Statistic[row] == "Launch% (Goal Kicks)") {
+          player_percentiles_data$Statistic[row] <- "Goal Kicks %"
+          player_percentiles_data$StatGroup[row] <- "Passing"
+        } else if (player_percentiles_data$Statistic[row] == "Penalty Kicks Attempted") {
+          player_percentiles_data$Statistic[row] <- "PK Against"
+          player_percentiles_data$StatGroup[row] <- "Set Piece"
         }
       }
       
@@ -443,18 +516,20 @@ percentile_plot_creator <- function(playerlink = NULL, lang = "ENG", curr_szn = 
       player_percentiles_data <- player_percentiles_data %>% mutate(id = case_when(
         StatGroup == "Defense" ~ 1,
         StatGroup == "Passing" ~ 2,
-        StatGroup == "Goalkeeping" ~ 3
+        StatGroup == "Goalkeeping" ~ 3,
+        StatGroup == "Set Piece" ~ 4
       ),
       season = paste(current_season_end_year-1, "/", current_season_end_year, sep=""),
       StatGroup = case_when(
         StatGroup == "Defense" ~ "Defensa",
         StatGroup == "Passing" ~ "Pases",
-        StatGroup == "Goalkeeping" ~ "Portero"
+        StatGroup == "Goalkeeping" ~ "Portero",
+        StatGroup == "Set Piece" ~ "Balón Parado"
       ))
       
       # group colors for the plot
       group.colors <- c("Defensa" = "#C86742", "Pases" = "#84B86F",
-                        "Portero" = "#6F78B3")
+                        "Portero" = "#6F78B3", "Balón Parado" = "#E3AE2E")
     }
     
     
@@ -630,6 +705,10 @@ get_players_urls_big5 <- function(curr_szn = 2023, leagues = c("ENG", "ESP", "FR
       all_teams_urls <- c(all_teams_urls, team_link)
     }
   }
+  
+  return(all_players_urls)
+  return(all_teams_urls)
+  return(league_urls)
 }
 
 # function to generate percentile plots for each of the big5 leagues players
